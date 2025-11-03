@@ -1,10 +1,20 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import Header from "./Header";
+import { checkValidData } from "../utils/validate";
 
 const Login = () => {
-  const [isSignUp, setIsSignUp] = useState(true);
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
   const toggleText = isSignUp ? "Already a member?" : "New to Netflix-gpt?";
   const toggleLink = isSignUp ? "Sign In" : "Sign up now.";
+
+  const email = useRef();
+  const password = useRef();
+
+  const handleButtonClick = () => {
+    const message = checkValidData(email.current.value, password.current.value);
+    setErrorMessage(message);
+  };
 
   const handleToggleForm = () => {
     setIsSignUp(!isSignUp);
@@ -19,7 +29,10 @@ const Login = () => {
           alt="bg image"
         />
       </div>
-      <form className="w-3/12 p-12 absolute my-32 bg-black/80 text-amber-50 mx-auto left-0 right-0 rounded-lg ">
+      <form
+        onSubmit={(e) => e.preventDefault()}
+        className="w-3/12 p-12 absolute my-32 bg-black/80 text-amber-50 mx-auto left-0 right-0 rounded-lg "
+      >
         {/* 💡 Use the prop for the heading */}
         <h1 className="text-3xl mb-5 font-semibold">
           {isSignUp ? "Sign Up" : "Sign In"}
@@ -32,6 +45,7 @@ const Login = () => {
           />
         )}
         <input
+          ref={email}
           type="text"
           placeholder="Enter your Email"
           className="p-3 my-4 w-full border border-white bg-gray-700"
@@ -39,6 +53,7 @@ const Login = () => {
         {/* Conditionally render password field for Sign In only */}
         {!isSignUp && (
           <input
+            ref={password}
             type="password" // Changed to password for security
             placeholder="Password"
             className="p-3 my-4 w-full border border-white bg-gray-700"
@@ -47,14 +62,19 @@ const Login = () => {
 
         {isSignUp && (
           <input
-            type="password" // Changed to password for security
+            type="password"
             placeholder="Choose your Password"
             className="p-3 my-4 w-full border border-white bg-gray-700"
           />
         )}
 
+        <p className="text-red-700 font-semibold text-md">{errorMessage}</p>
+
         {/* 💡 Use the prop for the button text */}
-        <button className="w-full bg-rose-700 p-2.5 my-4 rounded-lg">
+        <button
+          className="w-full bg-rose-700 p-2.5 my-4 rounded-lg"
+          onClick={handleButtonClick}
+        >
           {isSignUp ? "Get Started" : "Sign In"}
         </button>
 
